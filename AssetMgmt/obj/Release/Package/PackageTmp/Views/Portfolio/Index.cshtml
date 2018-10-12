@@ -1,0 +1,155 @@
+﻿@model IEnumerable<AssetMgmt.Models.Portfolio>
+
+@{
+    ViewBag.Title = "Portfolio";
+}
+
+<h2>Portfolio</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table" id="grid">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Stock.Name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Stock.Code)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Stock.Category)
+            </th>
+            <th style="text-align:right">
+                @Html.DisplayNameFor(model => model.Quantity)
+            </th>
+            <th style="text-align:right">
+                @Html.DisplayNameFor(model => model.Cost)
+            </th>
+            <th style="text-align:right">
+                @Html.DisplayNameFor(model => model.Last)
+            </th>
+            <th style="text-align:right">
+                @Html.DisplayNameFor(model => model.Amount)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Stock.Currency)
+            </th>
+            <th style="text-align:right">
+                @Html.DisplayNameFor(model => model.AmountSGD)
+            </th>
+            <th style="text-align:right">
+                @Html.DisplayNameFor(model => model.PL)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Stock.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Stock.Code)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Stock.Category)
+                </td>
+                <td style="text-align:right">
+                    @Html.DisplayFor(modelItem => item.Quantity)
+                </td>
+                <td style="text-align:right">
+                    @Html.DisplayFor(modelItem => item.Cost)
+                </td>
+                <td style="text-align:right">
+                    @Html.DisplayFor(modelItem => item.Last)
+                </td>
+                <td style="text-align:right">
+                    @Html.DisplayFor(modelItem => item.Amount)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Stock.Currency)
+                </td>
+                <td style="text-align:right">
+                    @Html.DisplayFor(modelItem => item.AmountSGD)
+                </td>
+                <td @{if (item.PL >= 0) { <text> style="text-align:right;color:green" </text>     } else { <text> style="text-align:right;color:red" </text>     } }>
+                    @Html.DisplayFor(modelItem => item.PL)
+                </td>
+                <td>
+                    @Html.ActionLink("Edit", "Edit", new { id = item.ID }) |
+                    @Html.ActionLink("Details", "Details", new { id = item.ID }) |
+                    @Html.ActionLink("Delete", "Delete", new { id = item.ID })
+                </td>
+            </tr>
+        }
+
+    </tbody>
+    <tfoot>
+        <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td>
+                <b>Total (SGD):</b>
+            </td>
+            <td style="text-align:right">
+                <b>@string.Format("{0:#,##0.00}", ViewBag.TotalAmountSGD)</b>
+            </td>
+            <td @{if (ViewBag.TotalPLSGD >= 0) { <text> style="text-align:right;color:green" </text>        } else { <text> style="text-align:right;color:red" </text>        } }>
+                <b>@string.Format("{0:#,##0.00}", ViewBag.TotalPLSGD)</b>
+            </td>
+            <td></td>
+        </tr>
+    </tfoot>
+</table>
+
+<script type="text/javascript" charset="utf8">
+    $(document).ready(function () {
+        $('#grid').DataTable({ paging: false,
+        "footerCallback": function ( row, data, start, end, display ) {
+            var api = this.api(), data;
+
+            // Remove the formatting to get integer data for summation
+            var intVal = function ( i ) {
+                return typeof i === 'string' ?
+                    i.replace(/[\$,]/g, '')*1 :
+                    typeof i === 'number' ?
+                    i : 0;
+            };
+
+            // Total amount
+            var totalAmt = api
+                .column(8, { filter: 'applied' })
+                .data()
+                .reduce( function (a, b) {
+                    return intVal(a) + intVal(b);
+                }, 0 );
+
+            // Total profit
+            var totalPl = api
+                .column(9, { filter: 'applied' })
+                .data()
+                .reduce(function (a, b) {
+                    return intVal(a) + intVal(b);
+                }, 0);
+
+            // Update footer
+            $(api.column(8).footer()).html(
+                "<b>" + Number(totalAmt.toFixed(2)).toLocaleString('en-US', { minimumFractionDigits: 2 }) + "</b>"
+            );
+
+            $(api.column(9).footer()).html(
+                "<b>" + Number(totalPl.toFixed(2)).toLocaleString('en-US', { minimumFractionDigits : 2 }) + "</b>"
+            );
+        }
+    });
+    } );
+</script>

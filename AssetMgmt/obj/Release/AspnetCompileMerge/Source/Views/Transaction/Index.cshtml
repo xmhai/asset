@@ -1,0 +1,74 @@
+﻿@model IEnumerable<AssetMgmt.Models.Transaction>
+
+@{
+    ViewBag.Title = "Transaction";
+}
+
+<h2>Transaction</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table" id="grid">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.OrderDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Stock.Name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Action)
+            </th>
+            <th style="text-align:right">
+                @Html.DisplayNameFor(model => model.Price)
+            </th>
+            <th style="text-align:right">
+                @Html.DisplayNameFor(model => model.Quantity)
+            </th>
+            <th style="text-align:right">
+                @Html.DisplayNameFor(model => model.Amount)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.OrderDate)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Stock.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Action)
+                </td>
+                <td style="text-align:right">
+                    @Html.DisplayFor(modelItem => item.Price)
+                </td>
+                <td style="text-align:right">
+                    @Html.DisplayFor(modelItem => item.Quantity)
+                </td>
+                <td style="text-align:right">
+                    @Html.DisplayFor(modelItem => item.Amount)
+                </td>
+                <td>
+                    @Html.ActionLink("Edit", "Edit", new { id = item.ID }) |
+                    @Html.ActionLink("Details", "Details", new { id = item.ID }) |
+                    @Html.ActionLink("Delete", "Delete", new { id = item.ID })
+                </td>
+            </tr>
+        }
+    </tbody>
+
+</table>
+
+<script type="text/javascript" charset="utf8">
+    $(document).ready(function () {
+        $('#grid').DataTable({ paging: false, "order": [[0, "desc"]] });
+    });
+</script>
+

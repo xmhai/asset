@@ -1,0 +1,97 @@
+﻿@model IEnumerable<AssetMgmt.Models.PL>
+
+@{
+    ViewBag.Title = "Profit/Loss";
+}
+
+<h2>Profit/Loss</h2>
+
+<table class="table" id="grid">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Stock.Name)
+            </th>
+            <th style="text-align:right;">
+                @Html.DisplayNameFor(model => model.RealisedAmount)
+            </th>
+            <th style="text-align:right;">
+                @Html.DisplayNameFor(model => model.UnrealisedAmount)
+            </th>
+            <th style="text-align:right;">
+                @Html.DisplayNameFor(model => model.Amount)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Stock.Name)
+                </td>
+                <td @{if (item.RealisedAmount >= 0) { <text> style="text-align:right;color:green" </text>  } else { <text> style="text-align:right;color:red" </text>  } }>
+                    @Html.DisplayFor(modelItem => item.RealisedAmount)
+                </td>
+                <td @{if (item.UnrealisedAmount >= 0) { <text> style="text-align:right;color:green" </text>  } else { <text> style="text-align:right;color:red" </text>  } }>
+                    @Html.DisplayFor(modelItem => item.UnrealisedAmount)
+                </td>
+                <td @{if (item.Amount >= 0) { <text> style="text-align:right;color:green" </text>  } else { <text> style="text-align:right;color:red" </text>  } }>
+                    @Html.DisplayFor(modelItem => item.Amount)
+                </td>
+                <td>
+                    @Html.ActionLink("Details", "Details", new { id = item.Stock.ID }) |
+                </td>
+            </tr>
+    }
+    </tbody>
+
+    <tfoot>
+        <tr>
+            <td></td>
+            <td></td>
+            <td>
+                <b>Total (SGD):</b>
+            </td>
+            <td style="text-align:right">
+                <b>@string.Format("{0:C}", ViewBag.TotalAmountSGD)</b>
+            </td>
+            <td></td>
+        </tr>
+    </tfoot>
+
+</table>
+
+<script type="text/javascript" charset="utf8">
+    $(document).ready(function () {
+        $('#grid').DataTable({ paging: false,
+        "footerCallback": function ( row, data, start, end, display ) {
+            var api = this.api(), data;
+
+            // Remove the formatting to get integer data for summation
+            var intVal = function ( i ) {
+                return typeof i === 'string' ?
+                    i.replace(/[\$,]/g, '')*1 :
+                    typeof i === 'number' ?
+                    i : 0;
+            };
+
+            // Total amount
+            var totalAmt = api
+                .column(3, { filter: 'applied' })
+                .data()
+                .reduce( function (a, b) {
+                    return intVal(a) + intVal(b);
+                }, 0 );
+
+            // Update footer
+            $(api.column(3).footer()).html(
+                "<b>" + Number(totalAmt.toFixed(2)).toLocaleString('en-US', { minimumFractionDigits: 2 }) + "</b>"
+            );
+        }
+    });
+    } );
+</script>
+

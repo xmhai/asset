@@ -1,0 +1,9 @@
+﻿@model IEnumerable<AssetMgmt.Models.AssetSummary>
+
+@{
+var myChart = new Chart(width: 600, height: 300)
+                    .AddSeries("Default", chartType: "Pie",
+                        xValue: Model, xField: "PieCategory",
+                        yValues: Model, yFields: "Amount")
+                    .Write();
+}    

@@ -1,0 +1,10 @@
+﻿@model IEnumerable<AssetMgmt.Models.AssetHistory>
+
+@{
+    var myChart = new Chart(width: 1080, height: 400)
+                        .AddTitle("Trend")
+                        .AddSeries("Default", chartType: "Line",
+                            xValue: Model, xField: "RecordDate",
+                            yValues: Model, yFields: "Amount")
+                        .Write();
+}  

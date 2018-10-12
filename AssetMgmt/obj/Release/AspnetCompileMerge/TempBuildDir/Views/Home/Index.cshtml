@@ -1,0 +1,98 @@
+﻿@model IEnumerable<AssetMgmt.Models.AssetSummary>
+
+@{
+    ViewBag.Title = "Home Page";
+    ViewBag.Now = DateTime.Now.ToString("yyyy/MM/dd");
+    ViewBag.Url = Request.Url + "Home/SaveSummary";
+}
+
+<div class="row">
+    <div class="col-md-6">
+        <h2>Summary</h2>
+        <h4>(as of @ViewBag.Now)</h4>
+
+        <table class="table">
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.Category)
+                </th>
+                <th style="text-align:right;">
+                    @Html.DisplayNameFor(model => model.Amount)
+                </th>
+                <th style="text-align:right;">
+                    @Html.DisplayNameFor(model => model.Percentage)
+                </th>
+            </tr>
+
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Category)
+                    </td>
+                    <td style="text-align:right;">
+                        @Html.DisplayFor(modelItem => item.Amount)
+                    </td>
+                    <td style="text-align:right;">
+                        @Html.DisplayFor(modelItem => item.Percentage)
+                    </td>
+                </tr>
+            }
+
+            <tr>
+                <td>
+                    <b>Total (SGD):</b>
+                </td>
+                <td style="text-align:right">
+                    <b>@string.Format("{0:#,##0.00}", ViewBag.TotalAmountSGD)</b>
+                </td>
+                <td style="text-align:right"><button type="button" class="btn btn-success" onclick="saveSummary();">Save</button></td>
+            </tr>
+
+        </table>
+    </div>
+    <div class="col-md-6">
+        <p><img src="@Url.Action("ShowChart")" /> </p>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-2">
+        <h2>History</h2>
+        <table class="table">
+            <tr>
+                <th>
+                    Date
+                </th>
+                <th>
+                    Amount
+                </th>
+            </tr>
+
+            @foreach (AssetMgmt.Models.AssetHistory item in ViewBag.AssetHistories)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.RecordDate)
+                    </td>
+                    <td style="text-align:right;">
+                        @Html.DisplayFor(modelItem => item.Amount)
+                    </td>
+                </tr>
+            }
+        </table>
+    </div>
+    <div class="col-md-10">
+        <p><img id="assetHistory" name="assetHistory" src="@Url.Action("ShowAssetHistory")" /> </p>
+    </div>
+</div>
+
+<script>
+    function saveSummary() {
+        var url = "@ViewBag.Url";
+        $.post(url, function (data) {
+            alert(data);
+            $("#assetHistory").attr('src', $("#assetHistory").attr('src') + '?' + Math.random());
+        });
+    }
+</script>
